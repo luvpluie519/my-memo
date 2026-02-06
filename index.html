@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#5a6f5a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,78 +13,87 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
-            font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', '游ゴシック', Meiryo, 'メイリオ', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'ヒラギノ角ゴ ProN W3', 'Yu Gothic', '游ゴシック', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe8 100%);
             color: #3a3a3a;
-            line-height: 1.8;
+            line-height: 1.6;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         .container {
-            max-width: 700px;
+            max-width: 100%;
             margin: 0 auto;
             background: white;
             min-height: 100vh;
-            box-shadow: 0 0 60px rgba(0,0,0,0.08);
         }
         .header {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9f8 100%);
-            padding: 24px 32px;
+            padding: 16px;
             border-bottom: 1px solid #e5e5e0;
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         .logo {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 300;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: #5a6f5a;
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         .tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow-x: auto;
-            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 0 4px 8px 4px;
+        }
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
         .tab {
-            flex: 1;
-            padding: 12px 16px;
+            flex: 0 0 auto;
+            padding: 10px 14px;
             text-align: center;
             background: transparent;
             border: none;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             color: #888;
             transition: all 0.3s ease;
             white-space: nowrap;
-            min-width: 70px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
+            border-radius: 18px;
+            letter-spacing: 0.3px;
+            touch-action: manipulation;
         }
         .tab.active {
             background: #5a6f5a;
             color: white;
+            font-weight: 500;
         }
-        .tab:hover:not(.active) {
-            background: #f0f2f0;
+        .tab:active {
+            transform: scale(0.95);
         }
         .compose-section {
-            padding: 32px;
+            padding: 20px 16px;
             border-bottom: 1px solid #e8e8e0;
             background: #fafaf8;
         }
         .compose-box {
             display: flex;
-            gap: 16px;
+            gap: 12px;
         }
         .avatar {
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, #7a9a7a 0%, #5a7a5a 100%);
             display: flex;
@@ -93,8 +102,7 @@
             color: white;
             font-weight: 500;
             flex-shrink: 0;
-            font-size: 22px;
-            letter-spacing: 1px;
+            font-size: 20px;
         }
         .avatar.good { background: linear-gradient(135deg, #7a9a7a 0%, #5a7a5a 100%); }
         .avatar.complaint { background: linear-gradient(135deg, #c4a57b 0%, #9d8560 100%); }
@@ -103,6 +111,7 @@
         .avatar.wantToGo { background: linear-gradient(135deg, #aa9a7a 0%, #8a7a5a 100%); }
         .compose-content {
             flex: 1;
+            min-width: 0;
         }
         .compose-textarea {
             width: 100%;
@@ -110,12 +119,13 @@
             resize: none;
             font-size: 15px;
             font-family: inherit;
-            padding: 16px;
+            padding: 12px;
             outline: none;
-            min-height: 80px;
+            min-height: 70px;
             background: white;
             border-radius: 8px;
             transition: border-color 0.3s;
+            -webkit-appearance: none;
         }
         .compose-textarea:focus {
             border-color: #7a9a7a;
@@ -127,41 +137,49 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 16px;
+            margin-top: 12px;
+            gap: 8px;
         }
         .category-display {
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
             font-weight: 500;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
         .category-display.good { background: #e8f5e8; color: #4a6a4a; }
         .category-display.complaint { background: #fff4e6; color: #8b7355; }
         .category-display.idea { background: #e3f2fd; color: #5a7a8a; }
         .category-display.todo { background: #fce4ec; color: #8a5a6a; }
         .category-display.wantToGo { background: #fff8e1; color: #8a7a5a; }
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .char-count {
-            font-size: 13px;
+            font-size: 12px;
             color: #999;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         .post-btn {
             background: #5a6f5a;
             color: white;
             border: none;
-            border-radius: 24px;
-            padding: 10px 24px;
-            font-size: 14px;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 1px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+            touch-action: manipulation;
+            -webkit-appearance: none;
         }
-        .post-btn:hover:not(:disabled) {
+        .post-btn:active:not(:disabled) {
+            transform: scale(0.95);
             background: #4a5f4a;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(90,111,90,0.2);
         }
         .post-btn:disabled {
             background: #ccc;
@@ -171,34 +189,32 @@
             min-height: 400px;
         }
         .post {
-            padding: 28px 32px;
+            padding: 20px 16px;
             border-bottom: 1px solid #f0f0e8;
             display: flex;
-            gap: 16px;
-            transition: background-color 0.2s;
-        }
-        .post:hover {
-            background-color: #fafaf8;
+            gap: 12px;
         }
         .post-content {
             flex: 1;
+            min-width: 0;
         }
         .post-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
         }
         .post-name {
             font-weight: 500;
-            font-size: 15px;
+            font-size: 14px;
             color: #3a3a3a;
         }
         .post-category {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            letter-spacing: 0.3px;
             font-weight: 500;
         }
         .post-category.good { background: #e8f5e8; color: #4a6a4a; }
@@ -208,64 +224,55 @@
         .post-category.wantToGo { background: #fff8e1; color: #8a7a5a; }
         .post-time {
             color: #999;
-            font-size: 13px;
-            letter-spacing: 0.3px;
+            font-size: 12px;
+            letter-spacing: 0.2px;
         }
         .post-text {
-            font-size: 15px;
-            margin-bottom: 16px;
+            font-size: 14px;
+            margin-bottom: 12px;
             word-wrap: break-word;
-            line-height: 1.7;
+            line-height: 1.6;
             color: #3a3a3a;
         }
         .post-actions {
             display: flex;
-            gap: 24px;
+            gap: 16px;
             color: #999;
         }
         .post-action {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 16px;
+            padding: 6px 10px;
+            border-radius: 14px;
             transition: all 0.2s;
-            font-size: 13px;
+            font-size: 12px;
+            touch-action: manipulation;
         }
-        .post-action:hover {
-            background: rgba(90, 111, 90, 0.08);
+        .post-action:active {
+            background: rgba(90, 111, 90, 0.1);
             color: #5a6f5a;
         }
         .empty-state {
             text-align: center;
-            padding: 80px 32px;
+            padding: 60px 20px;
             color: #999;
         }
         .empty-state-icon {
-            font-size: 56px;
-            margin-bottom: 20px;
+            font-size: 48px;
+            margin-bottom: 16px;
             opacity: 0.4;
         }
         .empty-state-text {
-            font-size: 15px;
-            letter-spacing: 0.5px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
         }
-        @media (max-width: 480px) {
-            .container {
-                max-width: 100%;
-            }
+        
+        /* iPhone notch対応 */
+        @supports (padding: env(safe-area-inset-top)) {
             .header {
-                padding: 20px 24px;
-            }
-            .logo {
-                font-size: 24px;
-            }
-            .compose-section {
-                padding: 24px;
-            }
-            .post {
-                padding: 24px;
+                padding-top: calc(16px + env(safe-area-inset-top));
             }
         }
     </style>
@@ -290,9 +297,9 @@
                     <textarea class="compose-textarea" placeholder="今日の気づき、ふとした瞬間を記録する" maxlength="280"></textarea>
                     <div class="compose-actions">
                         <div class="category-display good">良かった</div>
-                        <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="right-actions">
                             <span class="char-count">0/280</span>
-                            <button class="post-btn" disabled>記録する</button>
+                            <button class="post-btn" disabled>記録</button>
                         </div>
                     </div>
                 </div>
@@ -302,7 +309,7 @@
             <div class="empty-state">
                 <div class="empty-state-icon">✨</div>
                 <div class="empty-state-text">まだ記録がありません</div>
-                <div style="font-size: 13px; margin-top: 12px; color: #bbb;">最初の一歩を残してみましょう</div>
+                <div style="font-size: 12px; margin-top: 10px; color: #bbb;">最初の一歩を残してみましょう</div>
             </div>
         </div>
     </div>
@@ -331,11 +338,6 @@
                 const textarea = document.querySelector('.compose-textarea');
                 textarea.addEventListener('input', () => {
                     this.updateCharCount();
-                });
-                textarea.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && e.ctrlKey) {
-                        this.createPost();
-                    }
                 });
             }
             switchTab(category) {
