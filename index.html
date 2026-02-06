@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#5a6f5a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="My Journal">
+    <title>My Journal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', '游ゴシック', Meiryo, 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe8 100%);
+            color: #3a3a3a;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 60px rgba(0,0,0,0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9f8 100%);
+            padding: 24px 32px;
+            border-bottom: 1px solid #e5e5e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #5a6f5a;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: #888;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 70px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+        .tab.active {
+            background: #5a6f5a;
+            color: white;
+        }
+        .tab:hover:not(.active) {
+            background: #f0f2f0;
+        }
+        .compose-section {
+            padding: 32px;
+            border-bottom: 1px solid #e8e8e0;
+            background: #fafaf8;
+        }
+        .compose-box {
+            display: flex;
+            gap: 16px;
+        }
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7a9a7a 0%, #5a7a5a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            flex-shrink: 0;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+        .avatar.good { background: linear-gradient(135deg, #7a9a7a 0%, #5a7a5a 100%); }
+        .avatar.complaint { background: linear-gradient(135deg, #c4a57b 0%, #9d8560 100%); }
+        .avatar.idea { background: linear-gradient(135deg, #7a9aaa 0%, #5a7a8a 100%); }
+        .avatar.todo { background: linear-gradient(135deg, #aa7a8a 0%, #8a5a6a 100%); }
+        .avatar.wantToGo { background: linear-gradient(135deg, #aa9a7a 0%, #8a7a5a 100%); }
+        .compose-content {
+            flex: 1;
+        }
+        .compose-textarea {
+            width: 100%;
+            border: 1px solid #e0e0d8;
+            resize: none;
+            font-size: 15px;
+            font-family: inherit;
+            padding: 16px;
+            outline: none;
+            min-height: 80px;
+            background: white;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .compose-textarea:focus {
+            border-color: #7a9a7a;
+        }
+        .compose-textarea::placeholder {
+            color: #aaa;
+        }
+        .compose-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+        .category-display {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .category-display.good { background: #e8f5e8; color: #4a6a4a; }
+        .category-display.complaint { background: #fff4e6; color: #8b7355; }
+        .category-display.idea { background: #e3f2fd; color: #5a7a8a; }
+        .category-display.todo { background: #fce4ec; color: #8a5a6a; }
+        .category-display.wantToGo { background: #fff8e1; color: #8a7a5a; }
+        .char-count {
+            font-size: 13px;
+            color: #999;
+            letter-spacing: 0.5px;
+        }
+        .post-btn {
+            background: #5a6f5a;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .post-btn:hover:not(:disabled) {
+            background: #4a5f4a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(90,111,90,0.2);
+        }
+        .post-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .posts-container {
+            min-height: 400px;
+        }
+        .post {
+            padding: 28px 32px;
+            border-bottom: 1px solid #f0f0e8;
+            display: flex;
+            gap: 16px;
+            transition: background-color 0.2s;
+        }
+        .post:hover {
+            background-color: #fafaf8;
+        }
+        .post-content {
+            flex: 1;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .post-name {
+            font-weight: 500;
+            font-size: 15px;
+            color: #3a3a3a;
+        }
+        .post-category {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        .post-category.good { background: #e8f5e8; color: #4a6a4a; }
+        .post-category.complaint { background: #fff4e6; color: #8b7355; }
+        .post-category.idea { background: #e3f2fd; color: #5a7a8a; }
+        .post-category.todo { background: #fce4ec; color: #8a5a6a; }
+        .post-category.wantToGo { background: #fff8e1; color: #8a7a5a; }
+        .post-time {
+            color: #999;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+        .post-text {
+            font-size: 15px;
+            margin-bottom: 16px;
+            word-wrap: break-word;
+            line-height: 1.7;
+            color: #3a3a3a;
+        }
+        .post-actions {
+            display: flex;
+            gap: 24px;
+            color: #999;
+        }
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 16px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .post-action:hover {
+            background: rgba(90, 111, 90, 0.08);
+            color: #5a6f5a;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 32px;
+            color: #999;
+        }
+        .empty-state-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+        .empty-state-text {
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            .header {
+                padding: 20px 24px;
+            }
+            .logo {
+                font-size: 24px;
+            }
+            .compose-section {
+                padding: 24px;
+            }
+            .post {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">MY JOURNAL</div>
+            <div class="tabs">
+                <button class="tab active" data-category="all">✨ すべて</button>
+                <button class="tab" data-category="good">🌿 良かった</button>
+                <button class="tab" data-category="complaint">🍃 愚痴</button>
+                <button class="tab" data-category="idea">💡 アイデア</button>
+                <button class="tab" data-category="todo">📝 やること</button>
+                <button class="tab" data-category="wantToGo">🗺 行きたい</button>
+            </div>
+        </div>
+        <div class="compose-section">
+            <div class="compose-box">
+                <div class="avatar good" id="composeAvatar">🌿</div>
+                <div class="compose-content">
+                    <textarea class="compose-textarea" placeholder="今日の気づき、ふとした瞬間を記録する" maxlength="280"></textarea>
+                    <div class="compose-actions">
+                        <div class="category-display good">良かった</div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span class="char-count">0/280</span>
+                            <button class="post-btn" disabled>記録する</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="posts-container" id="postsContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">✨</div>
+                <div class="empty-state-text">まだ記録がありません</div>
+                <div style="font-size: 13px; margin-top: 12px; color: #bbb;">最初の一歩を残してみましょう</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        class JournalApp {
+            constructor() {
+                this.posts = JSON.parse(localStorage.getItem('journal_posts')) || [];
+                this.currentCategory = 'all';
+                this.selectedCategory = 'good';
+                this.init();
+            }
+            init() {
+                this.bindEvents();
+                this.renderPosts();
+                this.updateCharCount();
+            }
+            bindEvents() {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.category);
+                    });
+                });
+                document.querySelector('.post-btn').addEventListener('click', () => {
+                    this.createPost();
+                });
+                const textarea = document.querySelector('.compose-textarea');
+                textarea.addEventListener('input', () => {
+                    this.updateCharCount();
+                });
+                textarea.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        this.createPost();
+                    }
+                });
+            }
+            switchTab(category) {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-category="${category}"]`).classList.add('active');
+                
+                this.currentCategory = category;
+                
+                if (category !== 'all') {
+                    this.selectedCategory = category;
+                    this.updateCategoryDisplay();
+                }
+                
+                this.renderPosts();
+            }
+            updateCategoryDisplay() {
+                const categoryDisplay = document.querySelector('.category-display');
+                const avatar = document.getElementById('composeAvatar');
+                
+                categoryDisplay.className = `category-display ${this.selectedCategory}`;
+                categoryDisplay.textContent = this.getCategoryName(this.selectedCategory);
+                
+                avatar.className = `avatar ${this.selectedCategory}`;
+                avatar.textContent = this.getCategoryIcon(this.selectedCategory);
+            }
+            updateCharCount() {
+                const textarea = document.querySelector('.compose-textarea');
+                const charCount = document.querySelector('.char-count');
+                const postBtn = document.querySelector('.post-btn');
+                
+                const length = textarea.value.length;
+                charCount.textContent = `${length}/280`;
+                
+                postBtn.disabled = length === 0 || length > 280;
+            }
+            createPost() {
+                const textarea = document.querySelector('.compose-textarea');
+                
+                const text = textarea.value.trim();
+                if (!text) return;
+                const post = {
+                    id: Date.now(),
+                    text: text,
+                    category: this.selectedCategory,
+                    timestamp: new Date().toISOString(),
+                    likes: 0
+                };
+                this.posts.unshift(post);
+                this.savePosts();
+                
+                textarea.value = '';
+                this.updateCharCount();
+                this.renderPosts();
+            }
+            renderPosts() {
+                const container = document.getElementById('postsContainer');
+                
+                let filteredPosts = this.currentCategory === 'all' 
+                    ? this.posts 
+                    : this.posts.filter(post => post.category === this.currentCategory);
+                if (filteredPosts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">${this.getEmptyStateIcon()}</div>
+                            <div class="empty-state-text">${this.getEmptyStateText()}</div>
+                        </div>
+                    `;
+                    return;
+                }
+                container.innerHTML = filteredPosts.map(post => `
+                    <div class="post">
+                        <div class="avatar ${post.category}">${this.getCategoryIcon(post.category)}</div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-name">あなた</span>
+                                <span class="post-category ${post.category}">${this.getCategoryName(post.category)}</span>
+                                <span class="post-time">${this.formatTime(post.timestamp)}</span>
+                            </div>
+                            <div class="post-text">${this.escapeHtml(post.text)}</div>
+                            <div class="post-actions">
+                                <div class="post-action" onclick="app.likePost(${post.id})">
+                                    ♡ ${post.likes}
+                                </div>
+                                <div class="post-action" onclick="app.deletePost(${post.id})">
+                                    削除
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            likePost(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (post) {
+                    post.likes++;
+                    this.savePosts();
+                    this.renderPosts();
+                }
+            }
+            deletePost(id) {
+                if (confirm('この記録を削除しますか？')) {
+                    this.posts = this.posts.filter(p => p.id !== id);
+                    this.savePosts();
+                    this.renderPosts();
+                }
+            }
+            getCategoryName(category) {
+                const names = {
+                    good: '良かった',
+                    complaint: '愚痴',
+                    idea: 'アイデア',
+                    todo: 'やること',
+                    wantToGo: '行きたい'
+                };
+                return names[category] || category;
+            }
+            getCategoryIcon(category) {
+                const icons = {
+                    good: '🌿',
+                    complaint: '🍃',
+                    idea: '💡',
+                    todo: '📝',
+                    wantToGo: '🗺'
+                };
+                return icons[category] || '✨';
+            }
+            getEmptyStateIcon() {
+                const icons = {
+                    all: '✨',
+                    good: '🌿',
+                    complaint: '🍃',
+                    idea: '💡',
+                    todo: '📝',
+                    wantToGo: '🗺'
+                };
+                return icons[this.currentCategory] || '✨';
+            }
+            getEmptyStateText() {
+                const texts = {
+                    all: 'まだ記録がありません',
+                    good: '良かったことを残してみましょう',
+                    complaint: '思いを吐き出してみましょう',
+                    idea: 'ふと浮かんだアイデアを',
+                    todo: 'やりたいことを書き留めて',
+                    wantToGo: '訪れたい場所を記録しましょう'
+                };
+                return texts[this.currentCategory] || 'まだ記録がありません';
+            }
+            formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                
+                if (diff < 60000) return 'たった今';
+                if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
+                if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
+                
+                return date.toLocaleDateString('ja-JP', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML.replace(/\n/g, '<br>');
+            }
+            savePosts() {
+                localStorage.setItem('journal_posts', JSON.stringify(this.posts));
+            }
+        }
+        const app = new JournalApp();
+    </script>
+</body>
+</html>
